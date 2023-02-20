@@ -174,6 +174,7 @@ resource "local_file" "tf-key" {
 content  = tls_private_key.rsa.private_key_pem
 filename = "tf-key-pair"
 }
+
 resource "aws_instance" "Terra-serve-1" {
   ami           = var.ami_name
   key_name = "tf-key-pair"
