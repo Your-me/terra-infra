@@ -1,25 +1,41 @@
-pipeline {
-
-    agent any
-
-    stages {
-        stage('Checkout') {
-            steps {
-                checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs:[[url: 'https://github.com/Your-me/terra-infra.git']]])
+pipeline{
+    agent {
+        label 'default'
+    }
+    tools {
+        terraform 'terraform-05'
+    }
+    
+    stages{
+        stage('Git Checkout'){
+            steps{
+                git 'https://github.com/Your-me/terra-infra.git'
             }
         }
-
-        stage ("terraform init") {
-            steps {
-                sh ('terraform init')
+        stage("set env variabl"){
+            steps{
+                sh 'export AWS_PROFILE=YourmeLab'
             }
         }
-
-        stage("terraform Action"){
-            steps {
-                echo "Terraform action is -->${action}"
-                sh ('terraform ${action} --auto-approve')
-                
+        stage('Get Directory') {
+            steps{
+                println(WORKSPACE)
+            }
+        }
+        stage('Terraform init'){
+            steps{
+                sh 'terraform init'
+            }
+        }
+        stage('Terraform Apply'){
+            steps{
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: "Yourme_Aws",
+                    accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                    secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+                sh 'terraform apply --auto-approve'
+                }
             }
         }
     }
