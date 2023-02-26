@@ -1,15 +1,14 @@
-pipeline{
+pipeline {
+
     agent any
-    tools {
-        terraform 'terraform-05'
-    }
-    
-    stages{
-        stage('Git Checkout'){
-            steps{
-                git 'https://github.com/Your-me/terra-infra.git'
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs:[[url: 'https://github.com/Your-me/terra-infra.git']]])
             }
         }
+
         stage("set env variabl"){
             steps{
                 sh 'export AWS_PROFILE=YourmeLab'
@@ -20,11 +19,13 @@ pipeline{
                 println(WORKSPACE)
             }
         }
-        stage('Terraform init'){
-            steps{
-                sh 'terraform init'
+
+        stage ("terraform init") {
+            steps {
+                sh ('terraform init')
             }
         }
+
         stage('Terraform Apply'){
             steps{
                 withCredentials([[
