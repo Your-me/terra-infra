@@ -66,3 +66,16 @@ variable "instance" {
      description = "operating system"
      default = "t2.micro"
 }     
+
+variable "access_key"{
+    type = string
+    description = "operating system"
+    default = "AKIAVE33CQWR4T4M465M"
+}
+ 
+variable "secret_key"{
+    type = string
+    description = "operating system"
+    default = "/7R9tRcWxuxJj2sdnEYIDatr4oW/YKI67kCKihjj"
+ 
+ }
